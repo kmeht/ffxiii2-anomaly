@@ -57,7 +57,7 @@ end
 
 # Updates the clock hands based on a move.
 def update_hands(move)
-  $hands = [-value(move), value(move)].map{|h| (h + move) % $clock.length}
+  $hands = [-value(move), value(move)].map{|h| (h + move) % $clock.length} rescue [0,0] # in case the hands revert to initial state
 end
 
 # Executes the move and updates state.
@@ -92,4 +92,5 @@ def do_move(move)
 end
 
 (0..($clock.length - 1)).each{|start| do_move(start)}
+puts "Unfortunately, no solution was found."
 
