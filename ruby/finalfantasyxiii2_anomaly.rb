@@ -13,7 +13,7 @@
   the temporal rifts around the timeline. Because the script
   maintains a global state during the recursion (versus passing
   copies throughout each step), it could probably handle some 
-  really large versions of the puzzle.
+  really large versions of the puzzle. That said, it's still O(2^n).
   
   04/19/2012 - original
   04/20/2012 - refactoring
@@ -26,11 +26,11 @@
 # The clock is represented as an array of pairs of the form [value, active?].
 $clock = ARGV[0].split(",").map{|val| [val.to_i, true]}
 
-# Moves are represented by a simple array of clock indices.
-$moves = []
-
-# The clock hands are a pair of indices.
+# The clock hands are a pair of clock indices.
 $hands = [0, 0]
+
+# Moves are a simple array of clock indices.
+$moves = []
 
 
 # HELPER FUNCTIONS
@@ -74,8 +74,8 @@ def revert
 end
 
 
-# SCRIPT LOGIC
 
+# The main function of the script.
 def do_move(move)
   return if empty?(move)
   execute(move)
@@ -91,6 +91,7 @@ def do_move(move)
   end
 end
 
+# Try the chain of moves from each starting point.
 (0..($clock.length - 1)).each{|start| do_move(start)}
 puts "Unfortunately, no solution was found."
 
