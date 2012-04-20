@@ -1,78 +1,104 @@
+=begin
 
-$grid = [3, 4, 6, 4, 3, 3, 5, 2, 2, 1, 2, 5].map{|e| [e, true]}
+  Final Fantasy XIII-2: Clock Anomaly Script
+  by Kunal Mehta
+  
+  Usage: ruby finalfantasyxiii2_anomaly.rb X,X,X,X,X,X,X...
+  where the Xs are the values of the nodes numbered 0 to n clockwise.
+  You can pick 0 arbitrarily.
+  
+  This script brute-forces the clock anomaly puzzles found in 
+  the temporal rifts around the timeline. Because the script
+  maintains a global state during the recursion (versus passing a 
+  copy of the state throughout each step), it could probably handle 
+  some really large versions of the puzzle.
+  
+  04/19/2012 - original
+  04/20/2012 - initial cleanup, command-line argument
+  
+=end
+
+# GLOBAL STATE
+
+# The clock is represented as an array of pairs of the form [value, active?].
+$clock = ARGV[0].split(",").map{|val| [val.to_i, true]}
+
+# Moves are represented by a simple array of clock indices.
 $moves = []
 
-# HELPER METHODS
+# The clock hands are a pair of indices.
+$hands = [0, 0]
+
+
+# HELPER FUNCTIONS
+
+# Returns the value of a node.
 def value(index)
-  $grid[index][0]
+  $clock[index][0]
 end
 
 def upper(start)
-  (start + value(start)) % $grid.length
+  (start + value(start)) % $clock.length
 end
 
 def lower(start)
-  (start - value(start)) % $grid.length
+  (start - value(start)) % $clock.length
 end
 
+# Checks if a node is empty.
 def empty?(index)
-  not $grid[index][1]
+  not $clock[index][1]
 end
 
+# Checks if every node is empty.
 def win?
-  for square in $grid
-    return false if square[1]
-  end
-  return true
+  $clock.find_all{|node| node[1]}.empty?
 end
 
-def lose?(lower, upper)
-  (not $grid[lower][1]) and (not $grid[upper][1])
+# Checks if both clock hands point to empty nodes.
+def lose?(hand1, hand2)
+  empty?(hand1) and empty?(hand2)
 end
 
-# Executes the move
-def change_state(move)
+# Updates the clock hands based on a move.
+def update_hands(move)
+  $hands = [-value(move), value(move)].map{|h| (h + move) % $clock.length}
+  $hands = [(move - value(move)) % $clock.length, (move + value(move)) % $clock.length]
+end
+
+# Executes the move, updates state, and returns the new positions of the clock hands.
+def execute(move)
   $moves << move
-  $grid[move][1] = false
+  $clock[move][1] = false
 end
 
-# Reverts the move
-def revert_state
-  $grid[$moves.pop][1] = true
+# Reverts the state to before the last move.
+def revert
+  $clock[$moves.pop][1] = true
 end
 
 
-# ACTUAL METHODS
+# RECURSIVE FUNCTION
 
 def do_move(move)
-  #puts $grid.inspect
-  #puts "About to do index #{move}."
-  if empty?(move)
-    return nil
+  return if empty?(move)
+  h1 = lower(move)
+  h2 = upper(move)
+  execute(move)
+  if win?
+    puts $moves.inspect
+    exit
+  elsif lose?(h1, h2)
+    revert and return
   else
-    h1 = lower(move)
-    h2 = upper(move)
-    #puts "Choices are indices #{h1} and #{h2}."
-    #puts "Upper for move #{move} with value #{$grid[move][0]}: #{h1}"
-    #puts "Lower for move #{move} with value #{$grid[move][0]}: #{h2}"
-    change_state(move)
-    if win?
-      puts "You won!"
-      puts $moves.inspect
-      return true
-    elsif lose?(h1, h2)
-      #puts "You lost. :("
-      revert_state
-      return nil
-    else
-      deeper = do_move(h1) or do_move(h2)
-      revert_state if deeper.nil?
-      return deeper
-    end
+    do_move(h1)
+    do_move(h2)
+    revert and return
   end
 end
 
-(0..($grid.length - 1)).each do |start|
-  print $moves unless do_move(start).nil?
-end
+
+# EXECUTION
+
+(0..($clock.length - 1)).each{|start| do_move(start)}
 
