@@ -60,14 +60,14 @@ def update_hands(move)
   $hands = [-value(move), value(move)].map{|h| (h + move) % $clock.length}
 end
 
-# Executes the move, updates state, and returns the new positions of the clock hands.
+# Executes the move and updates state.
 def execute(move)
   $moves << move
   $clock[move][1] = false
   update_hands(move)
 end
 
-# Reverts the state to before the last move.
+# Reverts state to before the last move.
 def revert
   $clock[$moves.pop][1] = true
   update_hands($moves[-1])
