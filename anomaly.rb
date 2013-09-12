@@ -1,9 +1,9 @@
 =begin
 
   Final Fantasy XIII-2: Clock Anomaly Script
-  by Kunal Mehta
+  Copyright (c) 2012 Kunal Mehta
   
-  Usage: ruby finalfantasyxiii2_anomaly.rb X,X,X,X,X,X,X...
+  Usage: ruby anomaly.rb X,X,X,X,X,X,X...
   where the Xs are the values of the nodes numbered 0 to n clockwise.
   You can pick 0 arbitrarily.
   
