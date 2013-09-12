@@ -17,6 +17,8 @@
   
   04/19/2012 - original
   04/20/2012 - refactoring
+
+  Use of this source code is governed by a BSD license found in README.md.
   
 =end
 
