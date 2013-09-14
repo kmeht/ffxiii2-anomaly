@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 =begin
 
   Final Fantasy XIII-2: Clock Anomaly Script
@@ -19,7 +21,7 @@
   04/20/2012 - refactoring
 
   Use of this source code is governed by a BSD license found in README.md.
-  
+
 =end
 
 
