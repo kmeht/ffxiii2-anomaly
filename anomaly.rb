@@ -28,7 +28,7 @@
 # GLOBAL STATE
 
 # The clock is represented as an array of pairs of the form [value, active?].
-$clock = ARGV[0].split(",").map{|val| [val.to_i, true]}
+$clock = ARGV[0].split(',').map{|val| [val.to_i, true]}
 
 # The clock hands are a pair of clock indices.
 $hands = [0, 0]
@@ -97,5 +97,5 @@ end
 
 # Try the chain of moves from each starting point.
 (0..($clock.length - 1)).each{|start| do_move(start)}
-puts "Unfortunately, no solution was found."
+puts 'Unable to find a solution.'
 
